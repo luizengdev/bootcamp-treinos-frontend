@@ -1,7 +1,9 @@
 import dayjs from "dayjs";
-import { Calendar, ChartNoAxesColumn, House, Sparkles, UserRound } from "lucide-react";
+import { Calendar, ChartNoAxesColumn, House, UserRound } from "lucide-react";
 import Link from "next/link";
 
+import { ChatOpenButton } from "@/app/_components/chat/chat-open-button";
+import { Chatbot } from "@/app/_components/chat/chatbot";
 import { getHomeData } from "@/app/_lib/api/fetch-generated";
 import { getWorkoutDayPath } from "@/app/_lib/routes";
 import { Button } from "@/components/ui/button";
@@ -44,13 +46,7 @@ export const BottomNavigation = async ({ activeItem }: BottomNavigationProps) =>
       >
         <Calendar className="size-6" />
       </Button>
-      <Button
-        type="button"
-        aria-label="Personal IA"
-        className="size-auto rounded-full p-4 hover:bg-primary"
-      >
-        <Sparkles className="size-6" />
-      </Button>
+      <ChatOpenButton />
       <Button
         variant="ghost"
         nativeButton={false}
@@ -67,6 +63,7 @@ export const BottomNavigation = async ({ activeItem }: BottomNavigationProps) =>
       >
         <UserRound className="size-6" />
       </Button>
+      <Chatbot />
     </nav>
   );
 };

@@ -1,8 +1,7 @@
-import { CircleQuestionMark, Zap } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Zap } from "lucide-react";
 
 import { ExerciseBadge } from "./exercise-badge";
+import { ExerciseHelpButton } from "./exercise-help-button";
 
 interface ExerciseCardProps {
   name: string;
@@ -20,14 +19,7 @@ export const ExerciseCard = ({ name, sets, reps, restTimeInSeconds }: ExerciseCa
         <h3 className="font-heading text-base leading-[1.4] font-semibold text-foreground">
           {name}
         </h3>
-        <Button
-          type="button"
-          variant="ghost"
-          aria-label={`Ajuda sobre ${name}`}
-          className="size-5 p-0 text-foreground hover:bg-transparent"
-        >
-          <CircleQuestionMark className="size-5" />
-        </Button>
+        <ExerciseHelpButton exerciseName={name} />
       </div>
       <div className="flex items-start gap-1.5">
         <ExerciseBadge>
