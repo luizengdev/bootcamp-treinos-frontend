@@ -1,9 +1,9 @@
-import { Calendar, Dumbbell, Timer } from "lucide-react";
+import { Dumbbell, Timer } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { WeekDayBadge } from "@/app/_components/week-day-badge";
 import type { GetHomeData200TodayWorkoutDayWeekDay } from "@/app/_lib/api/fetch-generated";
-import { WEEK_DAY_LABELS } from "@/app/_lib/week-days";
 
 interface WorkoutDayCardProps {
   name: string;
@@ -37,12 +37,7 @@ export const WorkoutDayCard = ({
         />
       )}
 
-      <div className="relative flex items-center justify-center gap-1 rounded-full bg-background/16 px-2.5 py-[5px] backdrop-blur-[4px]">
-        <Calendar className="size-3.5 text-background" strokeWidth={1.5} />
-        <span className="font-heading text-xs leading-none font-semibold text-background uppercase">
-          {WEEK_DAY_LABELS[weekDay]}
-        </span>
-      </div>
+      <WeekDayBadge weekDay={weekDay} />
 
       <div className="relative flex w-full items-end justify-between">
         <div className="flex flex-col items-start gap-2">

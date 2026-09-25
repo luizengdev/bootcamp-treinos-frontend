@@ -21,3 +21,6 @@ export const WEEK_DAYS_BY_INDEX: GetHomeData200TodayWorkoutDayWeekDay[] = [
   "FRIDAY",
   "SATURDAY",
 ];
+
+export const getMondayFirstWeekDayIndex = (weekDay: GetHomeData200TodayWorkoutDayWeekDay) =>
+  (WEEK_DAYS_BY_INDEX.indexOf(weekDay) + 6) % 7;
