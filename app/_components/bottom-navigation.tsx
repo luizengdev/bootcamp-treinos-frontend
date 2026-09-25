@@ -7,7 +7,7 @@ import { getWorkoutDayPath } from "@/app/_lib/routes";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type NavigationItem = "home" | "calendar";
+type NavigationItem = "home" | "calendar" | "stats" | "profile";
 
 interface BottomNavigationProps {
   activeItem: NavigationItem;
@@ -18,8 +18,6 @@ const getItemClassName = (isActive: boolean) =>
     "size-auto rounded-full p-3 hover:bg-transparent",
     isActive ? "text-foreground" : "text-muted-foreground/65",
   );
-
-const inactiveItemClassName = getItemClassName(false);
 
 export const BottomNavigation = async ({ activeItem }: BottomNavigationProps) => {
   const homeData = await getHomeData(dayjs().format("YYYY-MM-DD"));
@@ -53,10 +51,20 @@ export const BottomNavigation = async ({ activeItem }: BottomNavigationProps) =>
       >
         <Sparkles className="size-6" />
       </Button>
-      <Button type="button" variant="ghost" aria-label="Estatísticas" className={inactiveItemClassName}>
+      <Button
+        variant="ghost"
+        nativeButton={false}
+        render={<Link href="/stats" aria-label="Estatísticas" />}
+        className={getItemClassName(activeItem === "stats")}
+      >
         <ChartNoAxesColumn className="size-6" />
       </Button>
-      <Button type="button" variant="ghost" aria-label="Perfil" className={inactiveItemClassName}>
+      <Button
+        variant="ghost"
+        nativeButton={false}
+        render={<Link href="/profile" aria-label="Perfil" />}
+        className={getItemClassName(activeItem === "profile")}
+      >
         <UserRound className="size-6" />
       </Button>
     </nav>
