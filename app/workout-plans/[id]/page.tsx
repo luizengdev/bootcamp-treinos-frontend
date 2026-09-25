@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { BottomNavigation } from "@/app/_components/bottom-navigation";
 import { WorkoutDayCard } from "@/app/_components/workout-day-card";
 import { getWorkoutPlan } from "@/app/_lib/api/fetch-generated";
+import { requireOnboarding } from "@/app/_lib/require-onboarding";
 import { getWorkoutDayPath } from "@/app/_lib/routes";
 import { getMondayFirstWeekDayIndex } from "@/app/_lib/week-days";
 
@@ -12,7 +13,7 @@ import { WorkoutPlanBanner } from "./_components/workout-plan-banner";
 
 const WorkoutPlanPage = async ({ params }: PageProps<"/workout-plans/[id]">) => {
   const { id: workoutPlanId } = await params;
-  const workoutPlan = await getWorkoutPlan(workoutPlanId);
+  const [, workoutPlan] = await Promise.all([requireOnboarding(), getWorkoutPlan(workoutPlanId)]);
 
   if (workoutPlan.status === 401) redirect("/auth");
   if (workoutPlan.status === 403 || workoutPlan.status === 404) notFound();

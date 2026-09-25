@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { BottomNavigation } from "@/app/_components/bottom-navigation";
 import { ConsistencyCard } from "@/app/_components/consistency-card";
@@ -8,29 +7,17 @@ import { HomeBanner } from "@/app/_components/home-banner";
 import { SectionHeader } from "@/app/_components/section-header";
 import { WorkoutDayCard } from "@/app/_components/workout-day-card";
 import { WorkoutStreak } from "@/app/_components/workout-streak";
-import { getHomeData, getUserTrainData } from "@/app/_lib/api/fetch-generated";
+import { requireOnboarding } from "@/app/_lib/require-onboarding";
 import { getWorkoutDayPath } from "@/app/_lib/routes";
 
 const Home = async () => {
   const today = dayjs().format("YYYY-MM-DD");
-  const [homeData, trainData] = await Promise.all([getHomeData(today), getUserTrainData()]);
-
-  if (homeData.status === 401) redirect("/auth");
-  if (homeData.status === 404) redirect("/onboarding");
-  if (homeData.status !== 200) {
-    throw new Error("Failed to fetch home data");
-  }
-
-  if (trainData.status !== 200) {
-    throw new Error("Failed to fetch user train data");
-  }
-  if (!trainData.data) redirect("/onboarding");
-
-  const { todayWorkoutDay, workoutStreak, consistencyByDay } = homeData.data;
+  const { homeData, trainData } = await requireOnboarding();
+  const { activeWorkoutPlanId, todayWorkoutDay, workoutStreak, consistencyByDay } = homeData;
 
   return (
     <main className="flex min-h-svh flex-col items-center bg-background pb-32">
-      <HomeBanner userName={trainData.data.userName} />
+      <HomeBanner userName={trainData.userName} />
 
       <section className="flex w-full flex-col items-start gap-3 px-5 pt-5">
         <SectionHeader title="Consistência" actionLabel="Ver histórico" />
@@ -43,7 +30,7 @@ const Home = async () => {
       <section className="flex w-full flex-col items-start gap-3 p-5">
         <SectionHeader title="Treino de Hoje" actionLabel="Ver treinos" />
         <Link
-          href={getWorkoutDayPath(homeData.data.activeWorkoutPlanId, todayWorkoutDay.id)}
+          href={getWorkoutDayPath(activeWorkoutPlanId, todayWorkoutDay.id)}
           className="w-full"
         >
           <WorkoutDayCard

@@ -1,10 +1,9 @@
 import { BicepsFlexed, Ruler, User, WeightTilde } from "lucide-react";
-import { redirect } from "next/navigation";
 
 import { AppHeader } from "@/app/_components/app-header";
 import { BottomNavigation } from "@/app/_components/bottom-navigation";
 import { StatCard } from "@/app/_components/stat-card";
-import { getUserTrainData } from "@/app/_lib/api/fetch-generated";
+import { requireOnboarding } from "@/app/_lib/require-onboarding";
 
 import { ProfileAvatar } from "./_components/profile-avatar";
 import { SignOutButton } from "./_components/sign-out-button";
@@ -12,15 +11,8 @@ import { SignOutButton } from "./_components/sign-out-button";
 const GRAMS_PER_KILOGRAM = 1000;
 
 const ProfilePage = async () => {
-  const trainData = await getUserTrainData();
-
-  if (trainData.status === 401) redirect("/auth");
-  if (trainData.status !== 200) {
-    throw new Error("Failed to fetch user train data");
-  }
-  if (!trainData.data) redirect("/onboarding");
-
-  const { userName, weightInGrams, heightInCentimeters, bodyFatPercentage, age } = trainData.data;
+  const { trainData } = await requireOnboarding();
+  const { userName, weightInGrams, heightInCentimeters, bodyFatPercentage, age } = trainData;
   const weightInKilograms = Number((weightInGrams / GRAMS_PER_KILOGRAM).toFixed(1));
 
   return (

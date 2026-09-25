@@ -7,6 +7,7 @@ import { BottomNavigation } from "@/app/_components/bottom-navigation";
 import { SectionHeader } from "@/app/_components/section-header";
 import { StatCard } from "@/app/_components/stat-card";
 import { getStats } from "@/app/_lib/api/fetch-generated";
+import { requireOnboarding } from "@/app/_lib/require-onboarding";
 
 import { ConsistencyHeatmap } from "./_components/consistency-heatmap";
 import { StreakBanner } from "./_components/streak-banner";
@@ -23,7 +24,10 @@ const formatTotalTime = (totalTimeInSeconds: number) => {
 
 const StatsPage = async () => {
   const today = dayjs().format(DATE_FORMAT);
-  const stats = await getStats({ from: getConsistencyStartDate(today), to: today });
+  const [, stats] = await Promise.all([
+    requireOnboarding(),
+    getStats({ from: getConsistencyStartDate(today), to: today }),
+  ]);
 
   if (stats.status === 401) redirect("/auth");
   if (stats.status !== 200) {

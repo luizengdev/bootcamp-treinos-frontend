@@ -4,16 +4,21 @@ import { notFound, redirect } from "next/navigation";
 import { BottomNavigation } from "@/app/_components/bottom-navigation";
 import { WorkoutDayCard } from "@/app/_components/workout-day-card";
 import { getWorkoutDay } from "@/app/_lib/api/fetch-generated";
+import { requireOnboarding } from "@/app/_lib/require-onboarding";
 import { WEEK_DAY_LABELS, WEEK_DAYS_BY_INDEX } from "@/app/_lib/week-days";
 import { Button } from "@/components/ui/button";
 
 import { BackButton } from "./_components/back-button";
+import { CompleteWorkoutButton } from "./_components/complete-workout-button";
 import { ExerciseCard } from "./_components/exercise-card";
 import { StartWorkoutButton } from "./_components/start-workout-button";
 
 const WorkoutDayPage = async ({ params }: PageProps<"/workout-plans/[id]/days/[dayId]">) => {
   const { id: workoutPlanId, dayId: workoutDayId } = await params;
-  const workoutDay = await getWorkoutDay(workoutPlanId, workoutDayId);
+  const [, workoutDay] = await Promise.all([
+    requireOnboarding(),
+    getWorkoutDay(workoutPlanId, workoutDayId),
+  ]);
 
   if (workoutDay.status === 401) redirect("/auth");
   if (workoutDay.status === 403 || workoutDay.status === 404) notFound();
@@ -24,7 +29,7 @@ const WorkoutDayPage = async ({ params }: PageProps<"/workout-plans/[id]/days/[d
   const { name, weekDay, estimatedDurationInSeconds, coverImageUrl, exercises, sessions } =
     workoutDay.data;
   const isToday = WEEK_DAYS_BY_INDEX[dayjs().day()] === weekDay;
-  const hasSessionInProgress = sessions.some((session) => !session.completedAt);
+  const sessionInProgress = sessions.find((session) => !session.completedAt);
   const hasCompletedSession = sessions.some((session) => Boolean(session.completedAt));
   const hasNoSession = sessions.length === 0;
 
@@ -75,14 +80,12 @@ const WorkoutDayPage = async ({ params }: PageProps<"/workout-plans/[id]/days/[d
           ))}
         </div>
 
-        {hasSessionInProgress && (
-          <Button
-            type="button"
-            variant="outline"
-            className="h-auto w-full rounded-full py-3 font-heading text-sm leading-none font-semibold text-foreground"
-          >
-            Marcar como concluído
-          </Button>
+        {sessionInProgress && (
+          <CompleteWorkoutButton
+            workoutPlanId={workoutPlanId}
+            workoutDayId={workoutDayId}
+            sessionId={sessionInProgress.id}
+          />
         )}
       </section>
 

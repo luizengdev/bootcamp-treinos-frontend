@@ -1,16 +1,16 @@
 "use client";
 
 import type { ChatStatus, UIMessage } from "ai";
-import { useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { Streamdown } from "streamdown";
 
 import { ChatMessage } from "./chat-message";
 
-const WELCOME_MESSAGE = "Olá! Sou sua IA personal. Como posso ajudar com seu treino hoje?";
-
 interface ChatMessagesProps {
   messages: UIMessage[];
   status: ChatStatus;
+  children?: ReactNode;
+  footer?: ReactNode;
 }
 
 const getMessageText = (message: UIMessage) =>
@@ -19,7 +19,7 @@ const getMessageText = (message: UIMessage) =>
     .map((part) => part.text)
     .join("");
 
-export const ChatMessages = ({ messages, status }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, status, children, footer }: ChatMessagesProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const isStreaming = status === "streaming";
   const isWaitingResponse = status === "submitted";
@@ -31,7 +31,7 @@ export const ChatMessages = ({ messages, status }: ChatMessagesProps) => {
 
   return (
     <div className="flex w-full flex-1 flex-col overflow-y-auto pb-5">
-      <ChatMessage role="assistant">{WELCOME_MESSAGE}</ChatMessage>
+      {children}
       {messages.map((message, index) => {
         const text = getMessageText(message);
         if (!text) return null;
@@ -64,6 +64,7 @@ export const ChatMessages = ({ messages, status }: ChatMessagesProps) => {
           </span>
         </ChatMessage>
       )}
+      {footer}
       <div ref={bottomRef} />
     </div>
   );
